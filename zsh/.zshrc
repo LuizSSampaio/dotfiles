@@ -108,4 +108,12 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+alias l="eza --icons"
+alias ls="eza --icons -l -a"
+
+alias cd="z"
+alias .="z ~"
+alias ~="z ~"
+
 eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"
