@@ -10,5 +10,5 @@ return {
   { import = "astrocommunity.pack.rust" },
   { import = "astrocommunity.pack.cpp" },
   { import = "astrocommunity.pack.cmake" },
-  { import = "astrocommunity.code-runner.compiler-nvim" },
+  { import = "astrocommunity.pack.zig" },
 }
