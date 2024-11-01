@@ -11,4 +11,5 @@ return {
   { import = "astrocommunity.pack.cpp" },
   { import = "astrocommunity.pack.cmake" },
   { import = "astrocommunity.pack.zig" },
+  { import = "astrocommunity.terminal-integration.vim-tmux-navigator" },
 }
