@@ -6,7 +6,6 @@ zoxide init fish | source
 starship init fish | source
 
 alias cd="z"
-alias ~="cd ~"
 alias ..="cd .."
 
 alias l="eza --icons"
