@@ -1,6 +1,7 @@
-local default_model = "deepseek/deepseek-r1-0528:free"
+local default_model = "moonshotai/kimi-k2:free"
 local available_models = {
-	"deepseek/deepseek-r1-0528:free",
+	"moonshotai/kimi-k2:free",
+	"moonshotai/kimi-k2",
 	"google/gemini-2.0-flash-001",
 	"google/gemini-2.5-pro",
 	"anthropic/claude-3.7-sonnet",
