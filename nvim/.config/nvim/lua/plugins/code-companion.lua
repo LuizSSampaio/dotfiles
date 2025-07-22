@@ -2,12 +2,12 @@ local default_model = "moonshotai/kimi-k2:free"
 local available_models = {
 	"moonshotai/kimi-k2:free",
 	"moonshotai/kimi-k2",
-	"google/gemini-2.0-flash-001",
 	"google/gemini-2.5-pro",
 	"anthropic/claude-3.7-sonnet",
 	"anthropic/claude-sonnet-4",
 	"openai/gpt-4.1-mini",
 	"mistralai/devstral-medium",
+	"x-ai/grok-4",
 }
 local current_model = default_model
 
