@@ -1,2 +1,17 @@
 gui:
   language: en
+customCommands:
+  - key: '<c-l>'
+    context: 'files'
+    command: 'lumen draft | tee >(wl-copy)'
+    loadingText: 'Generating message...'
+    output: popup
+  - key: '<c-k>'
+    context: 'files'
+    command: 'lumen draft -c {{.Form.Context | quote}} | tee >(wl-copy)'
+    loadingText: 'Generating message...'
+    prompts:
+      - type: 'input'
+        title: 'Context'
+        key: 'Context'
+    output: popup
