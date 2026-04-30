@@ -13,6 +13,7 @@
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages text-editors)
   #:use-module (homes)
+  #:use-module (modules librewolf)
   #:use-module (modules steam)
   #:export (%luiz-home-environment))
 
@@ -36,7 +37,10 @@
     zip
 
     ;; Gaming
-    %steam-package)
+    %steam-package
+
+    ;; Browser
+    %librewolf-package)
    %conf-home-packages))
 
 ;; ---------------------------------------------------------------------------
