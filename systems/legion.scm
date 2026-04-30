@@ -29,11 +29,6 @@
     (type luks-device-mapping))
 
    (mapped-device
-    (source (uuid "ae661835-887b-44ea-b85a-c3fccf50438c"))
-    (target "cryptswap")
-    (type luks-device-mapping))
-
-   (mapped-device
     (source (uuid "b6abffa9-06b2-47e4-8a01-2b73dca6da81"))
     (target "cryptstorage")
     (type luks-device-mapping))))
@@ -69,8 +64,7 @@
 ;; Swap
 ;; ---------------------------------------------------------------------------
 (define %swap-devices
-  (list (swap-space (target "/dev/mapper/cryptswap")
-                    (dependencies %mapped-devices))))
+  (list (swap-space (target "/swapfile"))))
 
 ;; ---------------------------------------------------------------------------
 ;; Users
