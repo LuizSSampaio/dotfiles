@@ -4,15 +4,14 @@
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services sound)
-  #:use-module (gnu packages version-control)
   #:use-module (gnu packages nushell)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages wget)
   #:use-module (gnu packages file)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages terminals)
-  #:use-module (gnu packages text-editors)
   #:use-module (homes)
+  #:use-module (modules emacs)
   #:use-module (modules librewolf)
   #:use-module (modules steam)
   #:export (%luiz-home-environment))
@@ -23,9 +22,6 @@
 (define %home-packages
   (append
    (list
-    ;; Version control
-    git
-
     ;; Shell
     nushell
 
@@ -41,23 +37,26 @@
 
     ;; Browser
     %librewolf-package)
+   %doom-home-packages
    %conf-home-packages))
 
 ;; ---------------------------------------------------------------------------
 ;; Home services
 ;; ---------------------------------------------------------------------------
 (define %home-services
-  (list
-   ;; Persist common environment variables across all sessions.
-   (service home-environment-variables-service-type
-            '(;; Default editor for command-line tools.
-              ("EDITOR"  . "emacs")
-              ("VISUAL"  . "emacs")
-              ;; Colored output for common tools.
-              ("CLICOLOR" . "1")))
+  (append
+   (list
+    ;; Persist common environment variables across all sessions.
+    (service home-environment-variables-service-type
+             '(;; Default editor for command-line tools.
+               ("EDITOR"  . "emacs")
+               ("VISUAL"  . "emacs")
+               ;; Colored output for common tools.
+               ("CLICOLOR" . "1")))
 
-   (service home-dbus-service-type)
-   (service home-pipewire-service-type)))
+    (service home-dbus-service-type)
+    (service home-pipewire-service-type))
+   (doom-home-services)))
 
 ;; ---------------------------------------------------------------------------
 ;; Home environment declaration
