@@ -14,6 +14,7 @@
   #:use-module (btv tailscale)
   #:use-module (systems)
   #:use-module (modules nvidia)
+  #:use-module (modules steam)
   #:export (%legion-operating-system))
 
 ;; ---------------------------------------------------------------------------
@@ -156,7 +157,10 @@ table inet filter {
 
     (service tailscale-service-type))
 
+   (steam-system-services)
+
    (modify-services %base-services
+     (modify-nonguix-substitutes config)
      (delete iptables-service-type))))
 
 ;; ---------------------------------------------------------------------------

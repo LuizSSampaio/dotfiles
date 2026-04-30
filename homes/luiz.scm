@@ -13,6 +13,7 @@
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages text-editors)
   #:use-module (homes)
+  #:use-module (modules steam)
   #:export (%luiz-home-environment))
 
 ;; ---------------------------------------------------------------------------
@@ -32,7 +33,10 @@
     wget
     file
     unzip
-    zip)
+    zip
+
+    ;; Gaming
+    %steam-package)
    %conf-home-packages))
 
 ;; ---------------------------------------------------------------------------
