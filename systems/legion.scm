@@ -6,6 +6,7 @@
   #:use-module (gnu system shadow)
   #:use-module (gnu services)
   #:use-module (gnu services base)
+  #:use-module (gnu services dbus)
   #:use-module (gnu services desktop)
   #:use-module (gnu services networking)
   #:use-module (gnu packages certs)
@@ -79,7 +80,7 @@
    (user-account
     (name "luiz")
     (group "users")
-    (supplementary-groups '("wheel" "netdev" "audio" "video" "input"))
+    (supplementary-groups '("wheel" "netdev" "audio" "video" "input" "i2c"))
     (shell (file-append nushell "/bin/nu")))
    %base-user-accounts))
 
@@ -147,6 +148,10 @@ table inet filter {
 
    (list
     (service network-manager-service-type)
+    (service seatd-service-type)
+    (service polkit-service-type)
+    (service udisks-service-type)
+    (service upower-service-type)
 
     (service nftables-service-type
              (nftables-configuration

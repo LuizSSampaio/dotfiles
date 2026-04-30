@@ -13,6 +13,8 @@
   #:use-module (homes)
   #:use-module (modules emacs)
   #:use-module (modules librewolf)
+  #:use-module (modules niri)
+  #:use-module (modules noctalia)
   #:use-module (modules steam)
   #:export (%luiz-home-environment))
 
@@ -37,6 +39,8 @@
 
     ;; Browser
     %librewolf-package)
+   %niri-home-packages
+   %noctalia-home-packages
    %doom-home-packages
    %conf-home-packages))
 
@@ -56,6 +60,8 @@
 
     (service home-dbus-service-type)
     (service home-pipewire-service-type))
+   (niri-home-services)
+   (noctalia-home-services)
    (doom-home-services)))
 
 ;; ---------------------------------------------------------------------------
