@@ -17,6 +17,15 @@
   (map specification->package
        '("emacs" "git" "ripgrep" "fd")))
 
+(define %doom-private-config-files
+  (map (lambda (file)
+         `(,(string-append ".config/doom/" file)
+           ,(local-file
+             (canonicalize-path
+              (search-path %load-path
+                           (string-append "modules/emacs/doom.d/" file))))))
+       '("config.el" "init.el" "packages.el")))
+
 (define (doom-activation-gexp)
   (with-imported-modules (source-module-closure '((guix build utils)))
     #~(begin
@@ -55,6 +64,9 @@
 
 (define-public (doom-home-services)
   (list
+   (simple-service 'doom-emacs-config-files
+                   home-files-service-type
+                   %doom-private-config-files)
    (simple-service 'doom-emacs-activation
                    home-activation-service-type
                    (doom-activation-gexp))))
