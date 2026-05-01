@@ -4,6 +4,21 @@
 
 (setq org-directory "~/org/")
 
+(after! eshell
+  (setq eshell-history-size 1000
+        eshell-command-aliases-list
+        '(("c" "clear")
+          ("mkdir" "mkdir -vp $*")
+          ("rm" "rm -rifv $*")
+          ("mv" "mv -iv $*")
+          ("cp" "cp -riv $*")
+          ("cat" "bat --paging=never --style=plain $*")
+          ("ls" "eza -lh --group-directories-first --icons=auto $*")
+          ("lsa" "ls -a $*")
+          ("lt" "eza --tree --level=2 --long --icons --git $*")
+          ("lta" "lt -a $*")
+          ("n" "emacs -nw $*"))))
+
 (use-package! typst-ts-mode
   :mode ("\\.typ\\'" . typst-ts-mode)
   :hook ((typst-ts-mode . lsp-deferred))  ;; start LSP automatically

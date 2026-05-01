@@ -116,7 +116,7 @@ hotkey-overlay {
 }
 
 binds {
-    Mod+Return { spawn \"ghostty\"; }
+    Mod+Return { spawn \"emacs\" \"--eval\" \"(eshell)\"; }
     Mod+Space { spawn \"sh\" \"-c\" \"noctalia-shell ipc call launcher toggle\"; }
     Mod+Escape { spawn \"sh\" \"-c\" \"noctalia-shell ipc call sessionMenu toggle\"; }
 
@@ -274,7 +274,6 @@ window-rule {
 }
 
 window-rule {
-    match app-id=\"^ghostty$\"
     match app-id=\"^Alacritty$\"
     match app-id=\"^kitty$\"
     match app-id=\"^foot$\"
@@ -282,7 +281,16 @@ window-rule {
 }
 
 window-rule {
-    match app-id=\"^zen.*$\"
+    match app-id=\"^emacs$\"
+    match app-id=\"^Emacs$\"
+    open-maximized true
+    open-on-output \"HDMI-A-1\"
+    opacity 0.99
+}
+
+window-rule {
+    match app-id=\"^librewolf$\"
+    match app-id=\"^LibreWolf$\"
     open-maximized true
     open-on-output \"eDP-2\"
     opacity 0.99
