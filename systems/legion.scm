@@ -12,6 +12,7 @@
   #:use-module (gnu system privilege)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages certs)
+  #:use-module (gnu packages firmware)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages nushell)
   #:use-module (gnu packages version-control)
@@ -199,6 +200,9 @@ table inet filter {
              (bluetooth-configuration (auto-enable? #f)))
 
     (service tailscale-service-type))
+
+   (list
+    (udev-rules-service 'qmk qmk-udev-rules))
 
    (steam-system-services)
 

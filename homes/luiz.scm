@@ -5,10 +5,20 @@
   #:use-module (gnu home services sound)
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages shellutils)
+  #:use-module (gnu packages bittorrent)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages wget)
   #:use-module (gnu packages file)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages firmware)
+  #:use-module (gnu packages kde-graphics)
+  #:use-module (gnu packages kde-multimedia)
+  #:use-module (gnu packages mpi)
+  #:use-module (gnu packages package-management)
+  #:use-module (gnu packages telephony)
+  #:use-module (gnu packages video)
+  #:use-module (guix gexp)
+  #:use-module (guix modules)
   #:use-module (nongnu packages password-utils)
   #:use-module (homes)
   #:use-module (modules emacs)
@@ -21,6 +31,11 @@
 ;; ---------------------------------------------------------------------------
 ;; Home packages
 ;; ---------------------------------------------------------------------------
+(define %flatpak-applications
+  '("org.prismlauncher.PrismLauncher"
+    "in.cinny.Cinny"
+    "org.localsend.localsend_app"))
+
 (define %home-packages
   (append
    (list
@@ -39,6 +54,25 @@
 
     ;; Gaming
     %steam-package
+    flatpak
+
+    ;; Chat/voice
+    mumble
+
+    ;; Media creation/playback
+    kdenlive
+    krita
+    mpv
+    obs
+
+    ;; Network/file sharing
+    qbittorrent
+
+    ;; Keyboard firmware tooling
+    qmk
+
+    ;; MPI runtime/development tools
+    openmpi
 
     ;; Browser
     %librewolf-package
@@ -53,6 +87,28 @@
 ;; ---------------------------------------------------------------------------
 ;; Home services
 ;; ---------------------------------------------------------------------------
+(define (flatpak-apps-activation-gexp)
+  (with-imported-modules (source-module-closure '((guix build utils)))
+    #~(begin
+        (use-modules (guix build utils))
+
+        (define flatpak-bin #$(file-append flatpak "/bin/flatpak"))
+        (define flathub-url
+          "https://dl.flathub.org/repo/flathub.flatpakrepo")
+
+        (define (run/warn . args)
+          (unless (zero? (apply system* args))
+            (format (current-error-port)
+                    "warning: flatpak command failed: ~s~%" args)))
+
+        (run/warn flatpak-bin "remote-add" "--user" "--if-not-exists"
+                  "flathub" flathub-url)
+        (for-each
+         (lambda (app-id)
+           (run/warn flatpak-bin "install" "--user" "--noninteractive"
+                     "--or-update" "flathub" app-id))
+         '#$%flatpak-applications))))
+
 (define %home-services
   (append
    (list
@@ -65,7 +121,11 @@
                ("CLICOLOR" . "1")))
 
     (service home-dbus-service-type)
-    (service home-pipewire-service-type))
+    (service home-pipewire-service-type)
+
+    (simple-service 'flatpak-apps-activation
+                    home-activation-service-type
+                    (flatpak-apps-activation-gexp)))
    (niri-home-services)
    (noctalia-home-services)
    (doom-home-services)))
