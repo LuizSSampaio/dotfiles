@@ -120,7 +120,7 @@ binds {
     Mod+Space { spawn \"sh\" \"-c\" \"noctalia-shell ipc call launcher toggle\"; }
     Mod+Escape { spawn \"sh\" \"-c\" \"noctalia-shell ipc call sessionMenu toggle\"; }
 
-    Mod+Shift+B { spawn \"zen-beta\"; }
+    Mod+Shift+B { spawn \"librewolf\"; }
     Mod+Shift+F { spawn \"nautilus\" \"--new-window\"; }
     Mod+Shift+E { spawn \"sh\" \"-c\" \"emacs\"; }
     Mod+Shift+Slash { spawn \"bitwarden\"; }

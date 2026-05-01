@@ -12,6 +12,7 @@
   #:use-module (gnu packages file)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages terminals)
+  #:use-module (nongnu packages password-utils)
   #:use-module (guix gexp)
   #:use-module (homes)
   #:use-module (modules emacs)
@@ -45,7 +46,10 @@
     %steam-package
 
     ;; Browser
-    %librewolf-package)
+    %librewolf-package
+
+    ;; Password manager
+    bitwarden-desktop)
    %niri-home-packages
    %noctalia-home-packages
    %doom-home-packages

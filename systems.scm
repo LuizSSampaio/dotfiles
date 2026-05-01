@@ -45,6 +45,7 @@
 
     ;; Non-free Linux kernel + microcode initrd (from nonguix).
     (kernel linux)
+    (firmware (list linux-firmware))
     (initrd microcode-initrd)
     (initrd-modules %conf-initrd-modules)
 
