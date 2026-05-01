@@ -5,11 +5,13 @@
   #:use-module (gnu home services shells)
   #:use-module (gnu home services sound)
   #:use-module (gnu packages nushell)
+  #:use-module (gnu packages shellutils)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages wget)
   #:use-module (gnu packages file)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages terminals)
+  #:use-module (guix gexp)
   #:use-module (homes)
   #:use-module (modules emacs)
   #:use-module (modules librewolf)
@@ -26,6 +28,7 @@
    (list
     ;; Shell
     nushell
+    direnv
 
     ;; CLI utilities
     curl
@@ -47,9 +50,26 @@
 ;; ---------------------------------------------------------------------------
 ;; Home services
 ;; ---------------------------------------------------------------------------
+(define %nushell-config-file
+  (plain-file
+   "config.nu"
+   "$env.config = ($env.config? | default {})
+$env.config = ($env.config | upsert hooks.env_change.PWD [
+  {|before, after|
+    direnv export json | from json | default {} | load-env
+  }
+])
+"))
+
 (define %home-services
   (append
    (list
+    (simple-service
+     'nushell-config-files
+     home-files-service-type
+     (list
+      `(".config/nushell/config.nu" ,%nushell-config-file)))
+
     ;; Persist common environment variables across all sessions.
     (service home-environment-variables-service-type
              '(;; Default editor for command-line tools.
