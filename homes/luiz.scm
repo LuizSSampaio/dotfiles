@@ -3,6 +3,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services sound)
+  #:use-module (gnu packages admin)
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages shellutils)
   #:use-module (gnu packages bittorrent)
@@ -48,8 +49,14 @@
     eza
     wget
     file
+    fastfetch
     unzip
     zip
+    7zip
+    bzip2
+    unrar-free
+    xz
+    zstd
     zoxide
 
     ;; Gaming
@@ -62,6 +69,7 @@
     ;; Media creation/playback
     kdenlive
     krita
+    ffmpeg
     mpv
     obs
 
