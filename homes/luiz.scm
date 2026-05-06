@@ -20,7 +20,6 @@
   #:use-module (gnu packages video)
   #:use-module (guix gexp)
   #:use-module (guix modules)
-  #:use-module (nongnu packages password-utils)
   #:use-module (homes)
   #:use-module (modules emacs)
   #:use-module (modules librewolf)
@@ -33,9 +32,12 @@
 ;; Home packages
 ;; ---------------------------------------------------------------------------
 (define %flatpak-applications
-  '("org.prismlauncher.PrismLauncher"
-    "in.cinny.Cinny"
-    "org.localsend.localsend_app"))
+  (append
+   %steam-flatpak-applications
+   '("org.prismlauncher.PrismLauncher"
+     "com.bitwarden.desktop"
+     "in.cinny.Cinny"
+     "org.localsend.localsend_app")))
 
 (define %home-packages
   (append
@@ -60,7 +62,6 @@
     zoxide
 
     ;; Gaming
-    %steam-package
     flatpak
 
     ;; Chat/voice
@@ -72,6 +73,7 @@
     ffmpeg
     mpv
     obs
+    imv
 
     ;; Network/file sharing
     qbittorrent
@@ -79,14 +81,9 @@
     ;; Keyboard firmware tooling
     qmk
 
-    ;; MPI runtime/development tools
-    openmpi
-
     ;; Browser
-    %librewolf-package
-
-    ;; Password manager
-    bitwarden-desktop)
+    %librewolf-package)
+   %steam-home-packages
    %niri-home-packages
    %noctalia-home-packages
    %doom-home-packages
@@ -121,12 +118,13 @@
   (append
    (list
     ;; Persist common environment variables across all sessions.
-    (service home-environment-variables-service-type
-             '(;; Default editor for command-line tools.
-               ("EDITOR"  . "emacs")
-               ("VISUAL"  . "emacs")
-               ;; Colored output for common tools.
-               ("CLICOLOR" . "1")))
+    (simple-service 'luiz-environment-variables
+                    home-environment-variables-service-type
+                    '(;; Default editor for command-line tools.
+                      ("EDITOR"  . "emacs")
+                      ("VISUAL"  . "emacs")
+                      ;; Colored output for common tools.
+                      ("CLICOLOR" . "1")))
 
     (service home-dbus-service-type)
     (service home-pipewire-service-type)
@@ -145,11 +143,7 @@
   (home-environment
    (inherit %conf-initial-home)
    (packages %home-packages)
-   (services
-    (append
-     %home-services
-     ;; Keep the XDG base-directory service declared in the base skeleton.
-     (home-environment-services %conf-initial-home)))))
+   (services %home-services)))
 
 ;; Allow this file to be passed directly to `guix home reconfigure`.
 %luiz-home-environment

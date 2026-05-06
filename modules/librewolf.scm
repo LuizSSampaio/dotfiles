@@ -2,9 +2,9 @@
 
 (define-module (modules librewolf)
   #:use-module (srfi srfi-13)
+  #:use-module (guix build-system trivial)
   #:use-module (guix gexp)
   #:use-module (guix packages)
-  #:use-module (guix utils)
   #:use-module (gnu packages librewolf)
   #:export (%librewolf-package))
 
@@ -53,14 +53,71 @@
   (package
     (inherit librewolf)
     (name "librewolf-configured")
+    (source #f)
+    (build-system trivial-build-system)
+    (native-inputs '())
+    (inputs (list librewolf))
+    (propagated-inputs '())
     (arguments
-     (substitute-keyword-arguments (package-arguments librewolf)
-       ((#:phases phases)
-        #~(modify-phases #$phases
-            (add-after 'install 'install-librewolf-policies
-              (lambda _
-                (let ((policies.json
-                       (string-append #$output
-                                      "/lib/librewolf/distribution/policies.json")))
-                  (mkdir-p (dirname policies.json))
-                  (copy-file #$%librewolf-policies policies.json))))))))))
+     (list
+      #:modules '((guix build utils))
+      #:builder
+      #~(begin
+          (use-modules (guix build utils)
+                       (ice-9 ftw)
+                       (ice-9 regex)
+                       (srfi srfi-13))
+
+          (let* ((out #$output)
+                 (upstream #$librewolf)
+                 (distribution
+                  (string-append out "/lib/librewolf/distribution"))
+                 (policies.json
+                  (string-append distribution "/policies.json")))
+            (define (metadata-file? file)
+              (or (string-prefix? (string-append out "/bin/") file)
+                  (string-prefix? (string-append out "/share/applications/") file)
+                  (string-prefix? (string-append out "/share/metainfo/") file)
+                  (string-suffix? ".desktop" file)
+                  (string-suffix? ".service" file)))
+
+            (define (rewrite-output-references directory)
+              (define (rewrite-symlink file)
+                (let ((target (readlink file)))
+                  (when (string-prefix? upstream target)
+                    (delete-file file)
+                    (symlink
+                     (string-append out
+                                    (substring target (string-length upstream)))
+                     file))))
+
+              (define (walk directory)
+                (make-file-writable directory)
+                (for-each
+                 (lambda (entry)
+                   (let* ((file (string-append directory "/" entry))
+                          (stat (lstat file))
+                          (type (stat:type stat)))
+                     (cond
+                      ((eq? type 'directory)
+                       (walk file))
+                      ((eq? type 'symlink)
+                       (rewrite-symlink file))
+                      ((and (eq? type 'regular) (metadata-file? file))
+                       (make-file-writable file)
+                       (substitute* file
+                         (((regexp-quote upstream)) out)))))))
+                 (scandir directory
+                          (lambda (entry)
+                            (not (member entry '("." "..")))))))
+
+              (walk directory))
+
+            ;; Avoid rebuilding LibreWolf from source just to add policies.
+            (copy-recursively #$librewolf out)
+            (rewrite-output-references out)
+            (mkdir-p distribution)
+            (chmod distribution #o755)
+            (when (file-exists? policies.json)
+              (delete-file policies.json))
+            (copy-file #$%librewolf-policies policies.json))))))

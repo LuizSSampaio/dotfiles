@@ -5,6 +5,7 @@
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
   #:use-module (gnu system file-systems)
+  #:use-module (gnu system locale)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
   #:export (%conf-timezone
@@ -24,7 +25,7 @@
 (define-public %conf-initrd-modules
   (append
    '("nvme" "xhci_pci" "usb_storage" "usbhid" "sd_mod" "rtsx_pci_sdmmc"
-     "dm_mod" "dm_crypt" "aes_x86_64" "sha256_generic")
+     "dm_mod" "dm_crypt")
    %base-initrd-modules))
 
 ;; Skeleton operating-system used as a base for all host configurations.

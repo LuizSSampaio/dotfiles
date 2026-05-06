@@ -11,7 +11,7 @@
   #:use-module (gnu services networking)
   #:use-module (gnu system privilege)
   #:use-module (gnu packages admin)
-  #:use-module (gnu packages certs)
+  #:use-module (gnu packages nss)
   #:use-module (gnu packages firmware)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages nushell)
@@ -82,6 +82,10 @@
     (shell (file-append nushell "/bin/nu")))
    %base-user-accounts))
 
+(define %groups
+  (cons* (user-group (name "i2c") (system? #t))
+         %base-groups))
+
 ;; ---------------------------------------------------------------------------
 ;; System packages
 ;; ---------------------------------------------------------------------------
@@ -89,7 +93,6 @@
   (cons*
    git
    nushell
-   nss-certs
    opendoas
    %nvidia-offload-script
    %base-packages))
@@ -176,13 +179,10 @@ table inet filter {
 ;; ---------------------------------------------------------------------------
 (define %system-services
   (append
-   (nvidia-prime-services)
-
    (list
     (service network-manager-service-type)
     (service wpa-supplicant-service-type)
     (service dbus-root-service-type)
-    (service elogind-service-type)
     (service seatd-service-type)
     (service polkit-service-type)
     (service udisks-service-type)
@@ -206,25 +206,25 @@ table inet filter {
 
    (steam-system-services)
 
-   (modify-services %base-services
-     (modify-nonguix-substitutes config)
-     (delete iptables-service-type))))
+   (modify-nonguix-substitutes %base-services)))
 
 ;; ---------------------------------------------------------------------------
 ;; Operating system declaration
 ;; ---------------------------------------------------------------------------
 (define-public %legion-operating-system
-  (operating-system
-    (inherit %conf-initial-os)
-    (host-name "legion")
+  (nvidia-prime-operating-system
+   (operating-system
+     (inherit %conf-initial-os)
+     (host-name "legion")
 
-    (mapped-devices  %mapped-devices)
-    (file-systems    %file-systems)
-    (swap-devices    %swap-devices)
-    (users           %users)
-    (privileged-programs %privileged-programs)
-    (packages        %system-packages)
-    (services        %system-services)))
+     (mapped-devices  %mapped-devices)
+     (file-systems    %file-systems)
+     (swap-devices    %swap-devices)
+     (users           %users)
+     (groups          %groups)
+     (privileged-programs %privileged-programs)
+     (packages        %system-packages)
+     (services        %system-services))))
 
 ;; Allow this file to be passed directly to `guix system reconfigure`.
 %legion-operating-system

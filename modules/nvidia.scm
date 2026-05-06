@@ -4,10 +4,25 @@
 
 (define-module (modules nvidia)
   #:use-module (gnu)
-  #:use-module (gnu services)
-  #:use-module (nongnu services nvidia)
-  #:export (nvidia-prime-services
+  #:export (nvidia-prime-operating-system
             %nvidia-offload-script))
+
+(define (resolve-interface* name)
+  (catch #t
+    (lambda ()
+      (resolve-interface name))
+    (lambda _
+      #f)))
+
+(define (module-ref* module name)
+  (and module
+       (module-variable module name)
+       (module-ref module name)))
+
+(define (require-nonguix-binding module-name binding-name)
+  (or (module-ref* (resolve-interface* module-name) binding-name)
+      (error "Nonguix NVIDIA support is unavailable; update channels with `guix pull -C channels.scm`"
+             module-name binding-name)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; nvidia-offload helper script
@@ -32,14 +47,18 @@
          (apply execlp (car args) args)))))
 
 ;;; ---------------------------------------------------------------------------
-;;; nvidia-prime-services
+;;; nvidia-prime-operating-system
 ;;;
-;;; Returns a list of services to splice into the operating-system services
-;;; list.  Call (append (nvidia-prime-services) %desktop-services) or similar.
+;;; Applies Nonguix's current NVIDIA transformation to the final operating
+;;; system, replacing the older direct `nvidia-service-type` wiring.
 ;;; ---------------------------------------------------------------------------
-(define-public (nvidia-prime-services)
-  (list
-   ;; Load the proprietary NVIDIA kernel module and user-space components.
-   ;; nonguix provides nvidia-service-type which handles module loading,
-   ;; /dev node creation, and the OpenGL/Vulkan ICD configuration.
-   (service nvidia-service-type)))
+(define-public (nvidia-prime-operating-system os)
+  (let ((nonguix-transformation-nvidia
+         (require-nonguix-binding '(nonguix transformations)
+                                  'nonguix-transformation-nvidia))
+        (nvda
+         (require-nonguix-binding '(nongnu packages nvidia) 'nvda)))
+    ((nonguix-transformation-nvidia
+      #:driver nvda
+      #:configure-xorg? #f)
+     os)))

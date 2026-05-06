@@ -1,8 +1,5 @@
 (define-module (homes)
   #:use-module (gnu home)
-  #:use-module (gnu home services)
-  #:use-module (gnu home services shells)
-  #:use-module (gnu home services xdg)
   #:export (%conf-home-packages
             %conf-initial-home))
 
@@ -16,9 +13,4 @@
 ;; fields, mirroring the pattern used by %conf-initial-os in systems.scm.
 (define-public %conf-initial-home
   (home-environment
-    (packages %conf-home-packages)
-    (services
-     (list
-      ;; Activate XDG base-directory support so that tools respect
-      ;; $XDG_CONFIG_HOME, $XDG_DATA_HOME, etc.
-      (service home-xdg-base-directories-service-type)))))
+    (packages %conf-home-packages)))

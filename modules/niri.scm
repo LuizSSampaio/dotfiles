@@ -123,7 +123,7 @@ binds {
     Mod+Shift+B { spawn \"librewolf\"; }
     Mod+Shift+F { spawn \"nautilus\" \"--new-window\"; }
     Mod+Shift+E { spawn \"sh\" \"-c\" \"emacs\"; }
-    Mod+Shift+Slash { spawn \"bitwarden\"; }
+    Mod+Shift+Slash { spawn \"flatpak\" \"run\" \"com.bitwarden.desktop\"; }
 
     Mod+W { close-window; }
     Mod+Ctrl+Alt+Shift+E { quit; }
